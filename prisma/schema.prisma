@@ -1,0 +1,32 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model disease {
+  disease_id         Int                @id @default(autoincrement())
+  disease_name       String             @db.VarChar(255)
+  disease_definition String
+  disease_causes     String?
+  disease_treatment  String?
+  disease_symptoms   disease_symptoms[]
+}
+
+model disease_symptoms {
+  disease_symptoms_id Int       @id @default(autoincrement())
+  disease_id          Int?
+  symptoms_id         Int?
+  value_weight        Int
+  disease             disease?  @relation(fields: [disease_id], references: [disease_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_disease_id")
+  symptoms            symptoms? @relation(fields: [symptoms_id], references: [symptoms_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_symptoms_id")
+}
+
+model symptoms {
+  symptoms_id      Int                @id @default(autoincrement())
+  symptoms_name    String             @db.VarChar(50)
+  disease_symptoms disease_symptoms[]
+}
