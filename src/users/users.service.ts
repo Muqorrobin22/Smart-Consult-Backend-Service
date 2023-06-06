@@ -6,5 +6,11 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async findOne(userWhereUniqueInput: string) {}
+  async findOne(userWhereUniqueInput: string) {
+    return this.prisma.admin_temp.findUnique({
+      where: {
+        username: userWhereUniqueInput,
+      },
+    });
+  }
 }
