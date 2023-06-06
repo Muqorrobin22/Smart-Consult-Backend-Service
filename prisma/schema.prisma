@@ -13,6 +13,7 @@ model disease {
   disease_definition String
   disease_causes     String?
   disease_treatment  String?
+  output_bot         String             @default("Maaf Kami belum bisa mendiagnosa penyakit dari gejala anda")
   disease_symptoms   disease_symptoms[]
 }
 
@@ -29,4 +30,11 @@ model symptoms {
   symptoms_id      Int                @id @default(autoincrement())
   symptoms_name    String             @db.VarChar(50)
   disease_symptoms disease_symptoms[]
+}
+
+model admin_temp {
+  id       Int    @id @default(autoincrement())
+  username String @unique @db.VarChar(50)
+  password String @db.VarChar(255)
+  email    String @unique @db.VarChar(255)
 }
