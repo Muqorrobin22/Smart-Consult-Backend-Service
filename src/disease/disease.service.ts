@@ -25,4 +25,13 @@ export class DiseaseService {
       },
     });
   }
+
+  async getAllDisease() {
+    return this.prisma.disease.findMany({
+      select: {
+        disease_name: true,
+        output_bot: true,
+      },
+    });
+  }
 }

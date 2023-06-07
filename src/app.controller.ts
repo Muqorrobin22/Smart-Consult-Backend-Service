@@ -18,4 +18,9 @@ export class AppController {
   async getAllSymptoms() {
     return await this.diseaseService.getAllSymptoms();
   }
+
+  @Get('/penyakit')
+  async getAllDisease() {
+    return await this.diseaseService.getAllDisease();
+  }
 }
