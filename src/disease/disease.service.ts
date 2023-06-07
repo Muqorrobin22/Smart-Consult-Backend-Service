@@ -10,4 +10,19 @@ export class DiseaseService {
     return this.prisma
       .$queryRaw`select * from forward_chaining(${userWhereUniqueInput});`;
   }
+
+  async getAllSymptomsAndDiseaseRelation() {
+    return this.prisma
+      .$queryRaw`select ds.disease_symptoms_id, d.disease_name, s.symptoms_name, ds.value_weight from disease_symptoms ds
+    inner join disease d on ds.disease_id = d.disease_id
+    inner join symptoms s on ds.symptoms_id = s.symptoms_id order by d.disease_name;`;
+  }
+
+  async getAllSymptoms() {
+    return this.prisma.symptoms.findMany({
+      select: {
+        symptoms_name: true,
+      },
+    });
+  }
 }
