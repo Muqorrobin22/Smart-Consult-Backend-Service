@@ -38,7 +38,47 @@ export class DiseaseService {
     });
   }
 
-  createDiseaseRelation(createDiseaseRelation: CreateDiseaseRelationDto) {
-    return this.prisma.disease_symptoms;
+  findOneGejala(userWhereUniqueInput) {
+    return this.prisma.symptoms.findFirst({
+      where: {
+        symptoms_name: userWhereUniqueInput,
+      },
+      select: {
+        symptoms_id: true,
+      },
+    });
+  }
+
+  findOnePenyakit(userWhereUniqueInput) {
+    return this.prisma.disease.findFirst({
+      where: {
+        disease_name: userWhereUniqueInput,
+      },
+      select: {
+        disease_id: true,
+      },
+    });
+  }
+
+  async createDiseaseRelation(createDiseaseRelation: CreateDiseaseRelationDto) {
+    const findIdByGejala = await this.findOneGejala(
+      createDiseaseRelation.symptoms_name,
+    );
+    const findIdByPenyakit = await this.findOnePenyakit(
+      createDiseaseRelation.disease_name,
+    );
+
+    // if (
+    //   findIdByGejala?.symptoms_id &&
+    //   typeof findIdByGejala?.symptoms_id === 'object'
+    // ) {
+    //   const petsObject = findIdByGejala?.symptoms_id
+
+    // }
+
+    // const newIdGejala = JSON.parse()
+
+    return this.prisma
+      .$queryRaw`insert into disease_symptoms (disease_id, symptoms_id, value_weight) values (${findIdByPenyakit.disease_id}, ${findIdByGejala.symptoms_id}, ${createDiseaseRelation.value_weight})`;
   }
 }
