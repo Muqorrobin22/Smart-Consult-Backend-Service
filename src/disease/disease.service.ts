@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+import { CreateDiseaseRelationDto } from 'src/dto/disease/create-disease-relation.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -21,6 +22,7 @@ export class DiseaseService {
   async getAllSymptoms() {
     return this.prisma.symptoms.findMany({
       select: {
+        symptoms_id: true,
         symptoms_name: true,
       },
     });
@@ -29,9 +31,14 @@ export class DiseaseService {
   async getAllDisease() {
     return this.prisma.disease.findMany({
       select: {
+        disease_id: true,
         disease_name: true,
         output_bot: true,
       },
     });
+  }
+
+  createDiseaseRelation(createDiseaseRelation: CreateDiseaseRelationDto) {
+    return this.prisma.disease_symptoms;
   }
 }
