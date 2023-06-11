@@ -69,6 +69,34 @@ export class DiseaseService {
     });
   }
 
+  async findOneDiseaseRelationWithJoin(userWhereUniqueInput: number) {
+    const findIdRelation = await this.findOneDiseaseRelation(
+      userWhereUniqueInput,
+    );
+
+    if (!findIdRelation) {
+      throw new NotFoundException('Id Not Found');
+    }
+
+    return this.prisma.disease_symptoms.findUnique({
+      where: {
+        disease_symptoms_id: userWhereUniqueInput,
+      },
+      include: {
+        disease: {
+          select: {
+            disease_name: true,
+          },
+        },
+        symptoms: {
+          select: {
+            symptoms_name: true,
+          },
+        },
+      },
+    });
+  }
+
   async updateDiseaseRelation(
     id: number,
     updateDiseaseRelation: UpdateDiseaseRelationDto,
@@ -102,10 +130,6 @@ export class DiseaseService {
     const findIdByPenyakit = await this.findOnePenyakit(
       createDiseaseRelation.disease_name,
     );
-
-    if (!findIdByGejala || !findIdByPenyakit) {
-      throw new NotFoundException('data penyakit atau gejala tidak sesuai');
-    }
 
     return this.prisma
       .$queryRaw`insert into disease_symptoms (disease_id, symptoms_id, value_weight) values (${findIdByPenyakit.disease_id}, ${findIdByGejala.symptoms_id}, ${createDiseaseRelation.value_weight})`;

@@ -19,6 +19,11 @@ export class DiseaseController {
     return await this.diseaseService.getAllSymptomsAndDiseaseRelation();
   }
 
+  @Get('/relation/:id')
+  async getSpesificDiseaseRelation(@Param('id') id: string) {
+    return this.diseaseService.findOneDiseaseRelationWithJoin(+id);
+  }
+
   @Get(':disease_name')
   async getDisease(@Param('disease_name') diseaseName: string) {
     return this.diseaseService.symptomsDisease(diseaseName);
