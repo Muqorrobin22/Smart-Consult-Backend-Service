@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { CreateDiseaseRelationDto } from 'src/dto/disease/create-disease-relation.dto';
 import { UpdateDiseaseRelationDto } from 'src/dto/disease/update-disease-relation.dto';
@@ -75,12 +75,20 @@ export class DiseaseService {
   ) {
     const findIdRelation = await this.findOneDiseaseRelation(id);
 
+    if (!findIdRelation) {
+      throw new NotFoundException(`id ${id} tidak ditemukan`);
+    }
+
     const findIdByGejala = await this.findOneGejala(
       updateDiseaseRelation.symptoms_name,
     );
     const findIdByPenyakit = await this.findOnePenyakit(
       updateDiseaseRelation.disease_name,
     );
+
+    if (!findIdByGejala || !findIdByPenyakit) {
+      throw new NotFoundException('data penyakit atau gejala tidak sesuai');
+    }
 
     return this.prisma
       .$queryRaw`update disease_symptoms set disease_id = ${findIdByPenyakit.disease_id}, symptoms_id = ${findIdByGejala.symptoms_id}, value_weight = ${updateDiseaseRelation.value_weight}
@@ -94,6 +102,10 @@ export class DiseaseService {
     const findIdByPenyakit = await this.findOnePenyakit(
       createDiseaseRelation.disease_name,
     );
+
+    if (!findIdByGejala || !findIdByPenyakit) {
+      throw new NotFoundException('data penyakit atau gejala tidak sesuai');
+    }
 
     return this.prisma
       .$queryRaw`insert into disease_symptoms (disease_id, symptoms_id, value_weight) values (${findIdByPenyakit.disease_id}, ${findIdByGejala.symptoms_id}, ${createDiseaseRelation.value_weight})`;
