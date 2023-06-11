@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { CreateDiseaseRelationDto } from 'src/dto/disease/create-disease-relation.dto';
+import { UpdateDiseaseRelationDto } from 'src/dto/disease/update-disease-relation.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -60,6 +61,32 @@ export class DiseaseService {
     });
   }
 
+  findOneDiseaseRelation(userWhereUniqueInput: number) {
+    return this.prisma.disease_symptoms.findUnique({
+      where: {
+        disease_symptoms_id: userWhereUniqueInput,
+      },
+    });
+  }
+
+  async updateDiseaseRelation(
+    id: number,
+    updateDiseaseRelation: UpdateDiseaseRelationDto,
+  ) {
+    const findIdRelation = await this.findOneDiseaseRelation(id);
+
+    const findIdByGejala = await this.findOneGejala(
+      updateDiseaseRelation.symptoms_name,
+    );
+    const findIdByPenyakit = await this.findOnePenyakit(
+      updateDiseaseRelation.disease_name,
+    );
+
+    return this.prisma
+      .$queryRaw`update disease_symptoms set disease_id = ${findIdByPenyakit.disease_id}, symptoms_id = ${findIdByGejala.symptoms_id}, value_weight = ${updateDiseaseRelation.value_weight}
+    where disease_symptoms_id = ${findIdRelation.disease_symptoms_id}`;
+  }
+
   async createDiseaseRelation(createDiseaseRelation: CreateDiseaseRelationDto) {
     const findIdByGejala = await this.findOneGejala(
       createDiseaseRelation.symptoms_name,
@@ -67,16 +94,6 @@ export class DiseaseService {
     const findIdByPenyakit = await this.findOnePenyakit(
       createDiseaseRelation.disease_name,
     );
-
-    // if (
-    //   findIdByGejala?.symptoms_id &&
-    //   typeof findIdByGejala?.symptoms_id === 'object'
-    // ) {
-    //   const petsObject = findIdByGejala?.symptoms_id
-
-    // }
-
-    // const newIdGejala = JSON.parse()
 
     return this.prisma
       .$queryRaw`insert into disease_symptoms (disease_id, symptoms_id, value_weight) values (${findIdByPenyakit.disease_id}, ${findIdByGejala.symptoms_id}, ${createDiseaseRelation.value_weight})`;
