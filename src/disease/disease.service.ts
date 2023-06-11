@@ -131,6 +131,10 @@ export class DiseaseService {
       createDiseaseRelation.disease_name,
     );
 
+    if (!findIdByGejala || !findIdByPenyakit) {
+      throw new NotFoundException('data penyakit atau gejala tidak sesuai');
+    }
+
     return this.prisma
       .$queryRaw`insert into disease_symptoms (disease_id, symptoms_id, value_weight) values (${findIdByPenyakit.disease_id}, ${findIdByGejala.symptoms_id}, ${createDiseaseRelation.value_weight})`;
   }
