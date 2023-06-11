@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Delete,
+} from '@nestjs/common';
 import { DiseaseService } from './disease.service';
 import { CreateDiseaseRelationDto } from 'src/dto/disease/create-disease-relation.dto';
 import { UpdateDiseaseRelationDto } from 'src/dto/disease/update-disease-relation.dto';
@@ -38,5 +46,10 @@ export class DiseaseController {
       +id,
       updateDiseaseRelationDto,
     );
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.diseaseService.removeDiseaseRelation(+id);
   }
 }

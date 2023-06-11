@@ -97,6 +97,20 @@ export class DiseaseService {
     });
   }
 
+  async removeDiseaseRelation(id: number) {
+    const findId = await this.prisma.disease_symptoms.delete({
+      where: {
+        disease_symptoms_id: id,
+      },
+    });
+
+    if (!findId) {
+      throw new NotFoundException('Id For Delete Is None!');
+    }
+
+    return findId;
+  }
+
   async updateDiseaseRelation(
     id: number,
     updateDiseaseRelation: UpdateDiseaseRelationDto,
